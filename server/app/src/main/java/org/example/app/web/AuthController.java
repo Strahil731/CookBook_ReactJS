@@ -1,9 +1,7 @@
 package org.example.app.web;
 
 import lombok.RequiredArgsConstructor;
-import org.example.app.model.dto.user.RegisterResponse;
-import org.example.app.model.dto.user.UserDto;
-import org.example.app.model.dto.user.UserRegisterForm;
+import org.example.app.model.dto.user.*;
 import org.example.app.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,5 +20,12 @@ public class AuthController {
         RegisterResponse response = this.userService.registerUser(userRegisterForm);
 
         return new ResponseEntity<>(response.userDto(), response.status());
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserDto> login(@RequestBody UserLoginForm userLoginForm) {
+        LoginResponse response = this.userService.login(userLoginForm);
+
+        return new ResponseEntity<>(response.user(), response.status());
     }
 }
