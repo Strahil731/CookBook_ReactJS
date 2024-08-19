@@ -32,7 +32,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "first_name")
+    @Column(name = "last_name")
     private String lastName;
 
     @Column(name = "created_at")
