@@ -1,0 +1,46 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400&display=swap");
+
+body {
+    background: #DCDCDC;
+}
+
+.navigation {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #1E90FF;
+}
+
+.navigation li {
+    float: left;
+}
+
+.navigation li .linkBtn {
+    display: block;
+    color: #FFF;
+    text-align: center;
+    margin: 8px;
+    padding: 12px 10px;
+    text-decoration: none;
+}
+
+.navigation .linkBtn:hover {
+    background-color: #ADFF2F;
+    color: #000;
+    border-radius: 15px;
+}
+
+.navigation p {
+    font-size: 17px;
+    color: #FFF;
+}
+
+.navigation p span {
+    font-size: 17px;
+    color: #000;
+}
+
+.navigation li.right {
+    float: right;
+}
