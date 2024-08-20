@@ -5,7 +5,7 @@ export default function Navbar({auth}) {
     return (
         <>
             {
-                auth ? <nav className="navigation" id="navigation">
+                !auth ? <nav className="navigation" id="navigation">
                     <li className="user">
                         <p id="userMsg">Welcome, <span>Name.</span></p>
                     </li>
