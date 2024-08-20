@@ -10,13 +10,10 @@ export default function Login() {
 
         const response = await fetch("http://localhost:8080/api/auth/login", {
             method: "POST",
-            header: {
+            headers: {
                 "Content-Type": "application/json"
             },
-            body: {
-                email,
-                password
-            }
+            body: JSON.stringify({email, password})
         });
         const data = await response.json();
 
