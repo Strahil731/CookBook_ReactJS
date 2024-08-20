@@ -23,7 +23,5 @@
 hs_err_pid*
 replay_pid*
 
-package-lock.json
-package.json
 .gitignore
 node_modules
