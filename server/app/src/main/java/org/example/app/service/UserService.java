@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,14 +46,12 @@ public class UserService {
     }
 
     public LoginResponse login(UserLoginForm userLoginForm) {
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            try {
-                authenticationProvider
-                        .authenticate(new UsernamePasswordAuthenticationToken(userLoginForm.email(), userLoginForm.password()));
+        try {
+            authenticationProvider
+                    .authenticate(new UsernamePasswordAuthenticationToken(userLoginForm.email(), userLoginForm.password()));
 
-            } catch (AuthenticationException e) {
-                return new LoginResponse(null, HttpStatus.UNAUTHORIZED);
-            }
+        } catch (AuthenticationException e) {
+            return new LoginResponse(null, HttpStatus.UNAUTHORIZED);
         }
 
         UserDto user = modelMapper.map(this.userRepository.findByEmail(userLoginForm.email()).orElseThrow(), UserDto.class);
