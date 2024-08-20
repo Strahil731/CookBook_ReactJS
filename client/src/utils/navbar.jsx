@@ -1,19 +1,21 @@
 import "../styles/navbar.css";
 import {Link} from "react-router-dom";
+import {useContext} from "react";
+import {AuthContext} from "../context/Context.jsx";
 
-export default function Navbar({auth, setAuth}) {
+export default function Navbar() {
+    const {currentUser} = useContext(AuthContext);
+    const {logout} = useContext(AuthContext);
+
     function logoutFn(e) {
         e.preventDefault();
-        setAuth(false);
+        logout();
     }
 
     return (
         <>
             {
-                !auth ? <nav className="navigation" id="navigation">
-                    <li className="user">
-                        <p id="userMsg">Welcome, <span>Name.</span></p>
-                    </li>
+                !currentUser ? <nav className="navigation" id="navigation">
                     <li><Link id="homeLink" className="linkBtn" to="/">Home</Link></li>
                     <li><Link id="searchLink" className="linkBtn" href="/search">Search</Link></li>
                     <li className="right guest"><Link id="loginLink" className="linkBtn" to="/login">Login</Link>
@@ -22,7 +24,7 @@ export default function Navbar({auth, setAuth}) {
                                                       href="/register">Register</Link></li>
                 </nav> : <nav className="navigation" id="navigation">
                     <li className="user">
-                        <p id="userMsg">Welcome, <span>Name.</span></p>
+                        <p id="userMsg">Welcome, <span>{currentUser.firstName}</span></p>
                     </li>
                     <li className="user"><Link id="createLink" className="linkBtn" href="/create">Create</Link></li>
                     <li><Link id="homeLink" className="linkBtn" href="/home">Home</Link></li>

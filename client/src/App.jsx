@@ -4,30 +4,30 @@ import Navbar from "./utils/navbar";
 import Footer from "./utils/footer";
 import Login from "./components/loginPage";
 import {useEffect, useState} from "react";
-import {AuthContextProvider} from "./Context/context.jsx";
+import {AuthContextProvider} from "./context/Context.jsx";
 
 function App() {
-    const [auth, setAuth] = useState(false);
 
-    function checkAuth() {
-        if (auth === "false") {
-            alert("Invalid username or password!");
-        } else {
-            alert("Login successfully!");
-        }
+    // function checkAuth() {
+    //     if (auth === "false") {
+    //         alert("Invalid username or password!");
+    //     } else {
+    //         alert("Login successfully!");
+    //     }
+    //
+    //     console.log(auth);
+    // }
+    //
+    // useEffect(() => {
+    //     checkAuth();
+    // }, []);
 
-        console.log(auth);
-    }
-
-    useEffect(() => {
-        checkAuth();
-    }, []);
     return (
         <AuthContextProvider>
-            <Navbar auth={auth} setAuth={setAuth}/>
+            <Navbar/>
             <Routes>
                 <Route path="/" element={<Home/>}/>
-                <Route path="/login" element={<Login setAuth={setAuth}/>}/>
+                <Route path="/login" element={<Login/>}/>
             </Routes>
             <Footer/>
         </AuthContextProvider>
