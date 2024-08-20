@@ -1,23 +1,15 @@
 import "../styles/loginPage.css";
-import {useState} from "react";
+import {useContext, useState} from "react";
+import {AuthContext} from "../Context/context.jsx";
 
 export default function Login() {
+    const {login} = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     async function authenticationFn(e) {
         e.preventDefault();
-
-        const response = await fetch("http://localhost:8080/api/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({email, password})
-        });
-        const data = await response.json();
-
-        console.log(data);
+        await login({email, password});
     }
 
     return (

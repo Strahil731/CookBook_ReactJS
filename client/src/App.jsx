@@ -4,6 +4,7 @@ import Navbar from "./utils/navbar";
 import Footer from "./utils/footer";
 import Login from "./components/loginPage";
 import {useEffect, useState} from "react";
+import {AuthContextProvider} from "./Context/context.jsx";
 
 function App() {
     const [auth, setAuth] = useState(false);
@@ -12,22 +13,24 @@ function App() {
         if (auth === "false") {
             alert("Invalid username or password!");
         } else {
-
+            alert("Login successfully!");
         }
+
+        console.log(auth);
     }
 
     useEffect(() => {
         checkAuth();
     }, []);
     return (
-        <>
-            <Navbar auth={auth}/>
+        <AuthContextProvider>
+            <Navbar auth={auth} setAuth={setAuth}/>
             <Routes>
                 <Route path="/" element={<Home/>}/>
-                <Route path="/login" element={<Login/>}/>
+                <Route path="/login" element={<Login setAuth={setAuth}/>}/>
             </Routes>
             <Footer/>
-        </>
+        </AuthContextProvider>
     )
 }
 

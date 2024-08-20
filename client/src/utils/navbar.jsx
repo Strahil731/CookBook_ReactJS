@@ -1,7 +1,12 @@
 import "../styles/navbar.css";
 import {Link} from "react-router-dom";
 
-export default function Navbar({auth}) {
+export default function Navbar({auth, setAuth}) {
+    function logoutFn(e) {
+        e.preventDefault();
+        setAuth(false);
+    }
+
     return (
         <>
             {
@@ -9,7 +14,7 @@ export default function Navbar({auth}) {
                     <li className="user">
                         <p id="userMsg">Welcome, <span>Name.</span></p>
                     </li>
-                    <li><Link id="homeLink" className="linkBtn" href="/home">Home</Link></li>
+                    <li><Link id="homeLink" className="linkBtn" to="/">Home</Link></li>
                     <li><Link id="searchLink" className="linkBtn" href="/search">Search</Link></li>
                     <li className="right guest"><Link id="loginLink" className="linkBtn" to="/login">Login</Link>
                     </li>
@@ -23,7 +28,7 @@ export default function Navbar({auth}) {
                     <li><Link id="homeLink" className="linkBtn" href="/home">Home</Link></li>
                     <li><Link id="searchLink" className="linkBtn" href="/search">Search</Link></li>
                     <li className="user right guest"><Link id="logoutLink" className="linkBtn"
-                                                           href="/logout">Logout</Link></li>
+                                                           href="/login" onClick={logoutFn}>Logout</Link></li>
                 </nav>
             }
         </>
