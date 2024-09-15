@@ -16,5 +16,5 @@ public class RecipeCreateForm {
 
     private String ingredients;
 
-    private Long userId;
+    private String userId;
 }
