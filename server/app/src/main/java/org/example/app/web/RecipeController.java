@@ -52,6 +52,8 @@ public class RecipeController {
                 .buildAndExpand(this.recipeService.addRecipe(recipeCreateForm, principal.getName()))
                 .toUri();
 
+        this.recipeService.refreshRecipes();
+
         return ResponseEntity.created(uri).build();
     }
 }

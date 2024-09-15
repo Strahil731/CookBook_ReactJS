@@ -10,6 +10,8 @@ import org.example.app.repository.IngredientRepository;
 import org.example.app.repository.RecipeRepository;
 import org.example.app.repository.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,7 @@ public class RecipeService {
     private final UserRepository userRepository;
     private final IngredientRepository ingredientRepository;
 
+    @Cacheable("recipes")
     public List<RecipeDto> getAllRecipes() {
         return recipeRepository.findAll().stream().map(RecipeDto::mapToRecipeDto).toList();
     }
@@ -72,5 +75,9 @@ public class RecipeService {
         recipeEntity.setPreparation(recipeCreateForm.getPreparation());
 
         return recipeRepository.save(recipeEntity);
+    }
+
+    @CacheEvict("recipes")
+    public void refreshRecipes() {
     }
 }
