@@ -19,9 +19,6 @@ public class RecipeEntity extends BaseEntity {
     @Column
     private String title;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
     @Column
     private String preparation;
 
