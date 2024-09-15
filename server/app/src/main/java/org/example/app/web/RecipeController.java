@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.example.app.model.dto.FieldErrorDto;
 import org.example.app.model.dto.recipe.RecipeCreateForm;
 import org.example.app.model.dto.recipe.RecipeDto;
+import org.example.app.model.entity.UserEntity;
 import org.example.app.service.RecipeService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
@@ -55,5 +58,13 @@ public class RecipeController {
         this.recipeService.refreshRecipes();
 
         return ResponseEntity.created(uri).build();
+    }
+
+    @PreAuthorize("@recipeService.isOwner(#principal, #id)")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteRecipe(@AuthenticationPrincipal UserEntity principal, @PathVariable UUID id) {
+        this.recipeService.deleteRecipe(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

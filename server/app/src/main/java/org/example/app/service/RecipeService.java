@@ -80,4 +80,18 @@ public class RecipeService {
     @CacheEvict("recipes")
     public void refreshRecipes() {
     }
+
+    public void deleteRecipe(UUID id) {
+        this.recipeRepository.deleteById(id);
+    }
+
+    public boolean isOwner(UserEntity user, UUID id) {
+        if (user == null || id == null) {
+            return false;
+        }
+
+        UUID recipeOwnerId = this.recipeRepository.findById(id).orElseThrow().getOwner().getId();
+
+        return user.getId().equals(recipeOwnerId);
+    }
 }
