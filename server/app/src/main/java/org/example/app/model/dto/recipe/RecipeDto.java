@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.app.model.dto.ingredient.IngredientDto;
+import org.example.app.model.entity.RecipeEntity;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecipeDto {
-    private Long id;
+    private String id;
 
     private String title;
 
@@ -21,5 +22,17 @@ public class RecipeDto {
 
     private List<IngredientDto> ingredients;
 
-    private Long userId;
+    private String userId;
+
+    public static RecipeDto mapToRecipeDto(RecipeEntity recipeEntity) {
+        RecipeDto recipeDto = new RecipeDto();
+        recipeDto.setId(recipeEntity.getId().toString());
+        recipeDto.setTitle(recipeEntity.getTitle());
+        recipeDto.setPreparation(recipeEntity.getPreparation());
+        recipeDto.setImageUrl(recipeEntity.getImageUrl());
+        recipeDto.setIngredients(recipeEntity.getIngredients().stream().map(IngredientDto::mapToIngredientDto).toList());
+        recipeDto.setUserId(recipeEntity.getOwner().getId().toString());
+
+        return recipeDto;
+    }
 }
