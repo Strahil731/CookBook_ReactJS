@@ -48,9 +48,4 @@ public class AuthController {
 
         return new ResponseEntity<>(response.user(), response.status());
     }
-
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
 }
