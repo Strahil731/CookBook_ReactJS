@@ -34,7 +34,9 @@ public class RecipeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RecipeDto> getRecipe(@PathVariable UUID id) {
-        return ResponseEntity.ok(this.recipeService.getRecipeById(id));
+        RecipeDto recipe = this.recipeService.getRecipeById(id);
+
+        return recipe != null ? ResponseEntity.ok(recipe) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
@@ -64,6 +66,8 @@ public class RecipeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteRecipe(@AuthenticationPrincipal UserEntity principal, @PathVariable UUID id) {
         this.recipeService.deleteRecipe(id);
+
+        this.recipeService.refreshRecipes();
 
         return ResponseEntity.noContent().build();
     }
