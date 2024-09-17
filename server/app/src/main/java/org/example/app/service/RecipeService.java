@@ -9,7 +9,6 @@ import org.example.app.model.entity.UserEntity;
 import org.example.app.repository.IngredientRepository;
 import org.example.app.repository.RecipeRepository;
 import org.example.app.repository.UserRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +23,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RecipeService {
     private final RecipeRepository recipeRepository;
-    private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final IngredientRepository ingredientRepository;
 
@@ -35,7 +33,7 @@ public class RecipeService {
 
     public RecipeDto getRecipeById(UUID id) {
         return this.recipeRepository.findById(id)
-                .map(recipe -> modelMapper.map(recipe, RecipeDto.class))
+                .map(RecipeDto::mapToRecipeDto)
                 .orElse(null);
     }
 
