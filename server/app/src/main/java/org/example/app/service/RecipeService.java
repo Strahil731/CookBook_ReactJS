@@ -100,6 +100,7 @@ public class RecipeService {
         recipe.setTitle(recipeCreateForm.getTitle());
         recipe.setPreparation(recipeCreateForm.getPreparation());
         recipe.setImageUrl(recipeCreateForm.getImageUrl());
+        recipe.setIngredients(null);
         recipe = this.recipeRepository.save(recipe);
 
         List<IngredientEntity> ingredients = extractIngredients(recipeCreateForm, recipe);
