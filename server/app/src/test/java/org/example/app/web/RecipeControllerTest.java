@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -108,12 +108,7 @@ public class RecipeControllerTest {
     @Test
     @WithMockUser(username = DEFAULT_EMAIL, password = DEFAULT_EMAIL)
     public void testCreateRecipe() throws Exception {
-        RecipeCreateForm recipe = new RecipeCreateForm();
-        recipe.setTitle("Pizza");
-        recipe.setUserId(user.getId().toString());
-        recipe.setImageUrl("url");
-        recipe.setPreparation("Cook");
-        recipe.setIngredients("dough-1kg");
+        RecipeCreateForm recipe = createTestRecipe();
 
         String jsonRecipe = new ObjectMapper().writeValueAsString(recipe);
 
@@ -128,12 +123,8 @@ public class RecipeControllerTest {
     @Test
     @WithMockUser(username = DEFAULT_EMAIL, password = DEFAULT_EMAIL)
     public void testCreateRecipeWithWrongData() throws Exception {
-        RecipeCreateForm recipe = new RecipeCreateForm();
+        RecipeCreateForm recipe = createTestRecipe();
         recipe.setTitle("");
-        recipe.setUserId(user.getId().toString());
-        recipe.setImageUrl("url");
-        recipe.setPreparation("Cook");
-        recipe.setIngredients("dough-1kg");
 
         String jsonRecipe = new ObjectMapper().writeValueAsString(recipe);
 
@@ -173,9 +164,103 @@ public class RecipeControllerTest {
 
         HttpHeaders headers = getTokenHeader("pesho@abv.bg", "12345");
 
-        ResponseEntity<Void> deleteResponse = restTemplate.exchange("/api/recipe/{id}", HttpMethod.DELETE, new HttpEntity<>(headers), Void.class, UUID.randomUUID());
+        ResponseEntity<Void> deleteResponse = restTemplate.exchange("/api/recipe/{id}", HttpMethod.DELETE, new HttpEntity<>(headers), Void.class, recipeId1);
 
         assertEquals(HttpStatus.FORBIDDEN, deleteResponse.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateRecipe() {
+        HttpHeaders headers = getTokenHeader(DEFAULT_EMAIL, DEFAULT_PASSWORD);
+
+        RecipeCreateForm recipe = createTestRecipe();
+
+        RecipeEntity beforeUpdate = recipeRepository.findById(UUID.fromString(recipeId1)).orElse(null);
+        assertNotNull(beforeUpdate);
+        assertEquals(0, beforeUpdate.getIngredients().size());
+        assertNull(beforeUpdate.getImageUrl());
+        assertNull(beforeUpdate.getPreparation());
+
+        ResponseEntity<Void> response = restTemplate.exchange("/api/recipe/{id}", HttpMethod.PUT, new HttpEntity<>(recipe, headers), Void.class, recipeId1);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+        RecipeEntity afterUpdate = recipeRepository.findById(UUID.fromString(recipeId1)).orElse(null);
+        assertNotNull(afterUpdate);
+        assertEquals(1, afterUpdate.getIngredients().size());
+        assertEquals("url", afterUpdate.getImageUrl());
+        assertEquals("Cook", afterUpdate.getPreparation());
+
+    }
+
+    @Test
+    public void testUpdateRecipeWithWrongId() {
+        HttpHeaders headers = getTokenHeader(DEFAULT_EMAIL, DEFAULT_PASSWORD);
+
+        RecipeCreateForm recipe = createTestRecipe();
+
+        ResponseEntity<Void> response = restTemplate.exchange("/api/recipe/{id}", HttpMethod.PUT, new HttpEntity<>(recipe, headers), Void.class, UUID.randomUUID());
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+
+        RecipeEntity beforeUpdate = recipeRepository.findById(UUID.fromString(recipeId1)).orElse(null);
+        assertNotNull(beforeUpdate);
+        assertEquals(0, beforeUpdate.getIngredients().size());
+        assertNull(beforeUpdate.getImageUrl());
+        assertNull(beforeUpdate.getPreparation());
+
+    }
+
+    @Test
+    public void testUpdateRecipeWithWrongUser() {
+        UserEntity user = new UserEntity();
+        user.setEmail("pesho@abv.bg");
+        user.setPassword(passwordEncoder.encode("12345"));
+        userRepository.save(user);
+
+        HttpHeaders headers = getTokenHeader("pesho@abv.bg", DEFAULT_PASSWORD);
+
+        RecipeCreateForm recipe = createTestRecipe();
+
+        ResponseEntity<Void> response = restTemplate.exchange("/api/recipe/{id}", HttpMethod.PUT, new HttpEntity<>(recipe, headers), Void.class, recipeId1);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+
+        RecipeEntity beforeUpdate = recipeRepository.findById(UUID.fromString(recipeId1)).orElse(null);
+        assertNotNull(beforeUpdate);
+        assertEquals(0, beforeUpdate.getIngredients().size());
+        assertNull(beforeUpdate.getImageUrl());
+        assertNull(beforeUpdate.getPreparation());
+
+    }
+
+    @Test
+    public void testUpdateRecipeWithWrongData() {
+        HttpHeaders headers = getTokenHeader(DEFAULT_EMAIL, DEFAULT_PASSWORD);
+
+        RecipeCreateForm recipe = createTestRecipe();
+        recipe.setTitle("");
+
+        ResponseEntity<Void> response = restTemplate.exchange("/api/recipe/{id}", HttpMethod.PUT, new HttpEntity<>(recipe, headers), Void.class, recipeId1);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        RecipeEntity beforeUpdate = recipeRepository.findById(UUID.fromString(recipeId1)).orElse(null);
+        assertNotNull(beforeUpdate);
+        assertEquals(0, beforeUpdate.getIngredients().size());
+        assertNull(beforeUpdate.getImageUrl());
+        assertNull(beforeUpdate.getPreparation());
+
+    }
+
+    private RecipeCreateForm createTestRecipe() {
+        RecipeCreateForm recipe = new RecipeCreateForm();
+        recipe.setTitle("Pizza");
+        recipe.setImageUrl("url");
+        recipe.setPreparation("Cook");
+        recipe.setIngredients("dough-1kg");
+
+        return recipe;
     }
 
 
@@ -183,7 +268,7 @@ public class RecipeControllerTest {
         UserLoginForm login = new UserLoginForm(email, password);
 
         ResponseEntity<Object> response = restTemplate.postForEntity("/api/auth/login", login, Object.class);
-        String token = response.getHeaders().get("Authorization").get(0);
+        String token = response.getHeaders().get("Authorization").getFirst();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", token);
