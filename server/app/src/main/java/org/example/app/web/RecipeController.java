@@ -62,12 +62,32 @@ public class RecipeController {
         return ResponseEntity.created(uri).build();
     }
 
-    @PreAuthorize("@recipeService.isOwner(#principal, #id)")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteRecipe(@AuthenticationPrincipal UserEntity principal, @PathVariable UUID id) {
-        this.recipeService.deleteRecipe(id);
+    @PreAuthorize("@recipeService.isOwner(#principal, #recipeId)")
+    @DeleteMapping("/{recipeId}")
+    public ResponseEntity<Object> deleteRecipe(@AuthenticationPrincipal UserEntity principal, @PathVariable UUID recipeId) {
+        this.recipeService.deleteRecipe(recipeId);
 
         this.recipeService.refreshRecipes();
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("@recipeService.isOwner(#principal, #recipeId)")
+    @PutMapping("/{recipeId}")
+    public ResponseEntity<Object> updateRecipe(@Validated @RequestBody RecipeCreateForm recipeCreateForm,
+                                               BindingResult bindingResult,
+                                               @AuthenticationPrincipal UserEntity principal,
+                                               @PathVariable UUID recipeId) {
+        if (bindingResult.hasErrors()) {
+            List<FieldErrorDto> errors = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(e -> new FieldErrorDto(e.getField(), e.getDefaultMessage()))
+                    .toList();
+
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        this.recipeService.updateRecipe(recipeCreateForm, recipeId);
 
         return ResponseEntity.noContent().build();
     }

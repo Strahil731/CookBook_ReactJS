@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -91,5 +92,19 @@ public class RecipeService {
         UUID recipeOwnerId = this.recipeRepository.findById(id).orElseThrow().getOwner().getId();
 
         return user.getId().equals(recipeOwnerId);
+    }
+
+    @Transactional
+    public void updateRecipe(RecipeCreateForm recipeCreateForm, UUID recipeId) {
+        RecipeEntity recipe = this.recipeRepository.findById(recipeId).orElseThrow();
+        recipe.setTitle(recipeCreateForm.getTitle());
+        recipe.setPreparation(recipeCreateForm.getPreparation());
+        recipe.setImageUrl(recipeCreateForm.getImageUrl());
+        recipe = this.recipeRepository.save(recipe);
+
+        List<IngredientEntity> ingredients = extractIngredients(recipeCreateForm, recipe);
+        this.ingredientRepository.deleteAllByRecipeId(recipe);
+        this.ingredientRepository.saveAll(ingredients);
+
     }
 }

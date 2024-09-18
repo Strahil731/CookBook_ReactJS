@@ -3,6 +3,7 @@ package org.example.app.model.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "recipes")
+@DynamicUpdate
 public class RecipeEntity extends BaseEntity {
     @ManyToOne(targetEntity = UserEntity.class)
     @JoinColumn(name = "user_id")
