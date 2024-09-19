@@ -34,9 +34,7 @@ public class RecipeControllerTest {
     private static final String DEFAULT_PASSWORD = "12345";
 
     private static String recipeId1 = "";
-    private static String recipeId2 = "";
     private static String ownerId = "";
-    private UserEntity user;
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,12 +47,13 @@ public class RecipeControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     public void setUp() {
-        user = new UserEntity();
+        UserEntity user = new UserEntity();
         user.setEmail(DEFAULT_EMAIL);
         user.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
         user = userRepository.save(user);
@@ -68,7 +67,7 @@ public class RecipeControllerTest {
         RecipeEntity recipe2 = new RecipeEntity();
         recipe2.setTitle("French fries");
         recipe2.setOwner(user);
-        recipeId2 = recipeRepository.save(recipe2).getId().toString();
+        recipeRepository.save(recipe2);
 
     }
 
