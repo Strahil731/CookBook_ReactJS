@@ -1,4 +1,2 @@
-CREATE TYPE roles AS ENUM ('USER','ADMIN');
-
 ALTER TABLE users
-ADD role roles;
+ADD role VARCHAR(20);
