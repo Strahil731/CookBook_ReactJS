@@ -62,7 +62,7 @@ public class RecipeController {
         return ResponseEntity.created(uri).build();
     }
 
-    @PreAuthorize("@recipeService.isOwner(#principal, #recipeId)")
+    @PreAuthorize("hasRole('ADMIN') || @recipeService.isOwner(#principal, #recipeId)")
     @DeleteMapping("/{recipeId}")
     public ResponseEntity<Object> deleteRecipe(@AuthenticationPrincipal UserEntity principal, @PathVariable UUID recipeId) {
         this.recipeService.deleteRecipe(recipeId);
